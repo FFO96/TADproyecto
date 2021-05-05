@@ -67,6 +67,7 @@ public class ListadoClientes extends UI {
         final TextField dniEdit = new TextField("DNI del cliente:");
         final TextField telefonoEdit = new TextField("Telefono del cliente:");
         Button btnEdit = new Button("Guardar Cambios");
+        Button btnBorrar = new Button("Borrar cliente");
         Button btnCrear = new Button("Crear cliente");
         Button btnGuardar = new Button("Guardar cliente");
 
@@ -120,6 +121,29 @@ public class ListadoClientes extends UI {
 
         });
 
+        // Listener sobre el boton de borrar el cliente seleccionado
+        btnBorrar.addClickListener(e -> {
+
+            if (table.getValue() == null) {
+                Notification.show("No es posible eliminar un cliente si no ha seleccionado en la tabla");
+            } else {
+                borrarCliente(clientsList.get((int) table.getValue()));
+                nameEdit.setValue("");
+                telefonoEdit.setValue("");
+                dniEdit.setValue("");
+                layout.removeComponent(tableReservas);
+                // actualizamos la lista de clientes
+                clientsList = listarClientes();
+                //Se actualiza la tabla para que muestre la lista actualizada. Esto se hace borrando el contenido de la tabla y añadiendole la lista de nuevo
+                table.removeAllItems();
+                for (int i = 0; i < clientsList.size(); i++) {
+                    table.addItem(new Object[]{clientsList.get(i).getDni(), clientsList.get(i).getNombre(), clientsList.get(i).getTelefono()}, i);
+                }
+                
+            }
+
+        });
+
         // Listener sobre el boton de crear un nuevo cliente 
         btnCrear.addClickListener(e -> {
             nameEdit.setValue("");
@@ -138,7 +162,7 @@ public class ListadoClientes extends UI {
                 telefonoEdit.setValue("");
                 dniEdit.setValue("");
                 layout.removeAllComponents();
-                layout.addComponents(btnCrear, table, nameEdit, dniEdit, telefonoEdit, btnEdit);
+                layout.addComponents(btnCrear, table, nameEdit, dniEdit, telefonoEdit, btnEdit, btnBorrar);
                 // actualizamos la lista de clientes
                 clientsList = listarClientes();
                 //Se actualiza la tabla para que muestre la lista actualizada. Esto se hace borrando el contenido de la tabla y añadiendole la lista de nuevo
@@ -149,7 +173,7 @@ public class ListadoClientes extends UI {
             }
         });
 
-        layout.addComponents(btnCrear, table, nameEdit, dniEdit, telefonoEdit, btnEdit);
+        layout.addComponents(btnCrear, table, nameEdit, dniEdit, telefonoEdit, btnEdit, btnBorrar);
         layout.setMargin(true);
         layout.setSpacing(true);
         setContent(layout);
@@ -169,6 +193,20 @@ public class ListadoClientes extends UI {
             document.append("telefono", cliente.getTelefono());
             collectionC.insert(document);
 
+        } catch (UnknownHostException e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    public void borrarCliente(Cliente cliente) {
+        try {
+            MongoClient mongoClient = new MongoClient("localhost", 27017);
+            // Conectar a la base de datos
+            DB db = mongoClient.getDB("alquileres");
+            DBCollection collectionC = db.getCollection("clientes");
+
+            // Se elimina el cliente cusando el _id para indentificarlo en la coleccion
+            collectionC.remove(new BasicDBObject("_id", cliente.getObject_id()));
         } catch (UnknownHostException e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
