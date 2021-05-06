@@ -131,7 +131,7 @@ public class MyUI extends UI {
             //Se hace el update sobre la coleccion
             DBCursor cursor = collectionC.find(searchQuery);
 
-            while(cursor.hasNext()){
+            if(cursor.hasNext()){
                 flag = true;
             }
          } catch (UnknownHostException e) {
