@@ -219,7 +219,7 @@ getUI().getPage().setLocation("/ListadoReviews/");
             // Creamos la query para buscar el apartamento segun su _id
             BasicDBObject queryA = new BasicDBObject();
             queryA.put("_id", review.getApartamento().getId());
-            // Busqueda del apartamento para poder introducir su alisa y direccion en la review
+            // Busqueda del apartamento para poder introducir su alias y direccion en la review
             DBObject apartamento = collectionA.findOne(queryA);
 
             BasicDBObject document = new BasicDBObject();
@@ -247,7 +247,7 @@ getUI().getPage().setLocation("/ListadoReviews/");
             DB db = mongoClient.getDB("alquileres");
             DBCollection collectionR = db.getCollection("reviews");
 
-            // Se elimina el cliente cusando el _id para indentificarlo en la coleccion
+            // Se elimina la review cusando el _id para indentificarlo en la coleccion
             collectionR.remove(new BasicDBObject("_id", review.getObject_id()));
         } catch (UnknownHostException e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
