@@ -19,6 +19,10 @@ public class ElementoSel {
         this.id = id;
         this.nombre= nombre;
     }
+    
+     public ElementoSel(ObjectId id) {
+        this.id = id;
+    }
 
     public ObjectId getId() {
         return id;

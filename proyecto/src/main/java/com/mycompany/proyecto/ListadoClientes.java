@@ -72,7 +72,7 @@ public class ListadoClientes extends UI {
         Button btnGuardar = new Button("Guardar cliente");
 
         clientsList = listarClientes();
-        // Se completa la tabla si hay propietarios en la lista
+        // Se completa la tabla si hay clientes en la lista
         for (int i = 0; i < clientsList.size(); i++) {
             table.addItem(new Object[]{clientsList.get(i).getDni(), clientsList.get(i).getNombre(), clientsList.get(i).getTelefono()}, i);
         }
@@ -217,7 +217,7 @@ public class ListadoClientes extends UI {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
             // Conectar a la base de datos
             DB db = mongoClient.getDB("alquileres");
-            //Obtencion coleccion "usuario"
+            //Obtencion coleccion "clientes"
             DBCollection collectionC = db.getCollection("clientes");
 
             BasicDBObject set = new BasicDBObject(); // Objeto con el que vamosa hacer set del atributo a cambiar
@@ -241,12 +241,11 @@ public class ListadoClientes extends UI {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
             // Conectar a la base de datos
             DB db = mongoClient.getDB("alquileres");
-            //Obtencion coleccion "usuario"
+            //Obtencion coleccion "clientes"
             DBCollection collectionC = db.getCollection("clientes");
             cursor = collectionC.find();
 
             DBObject elemento;
-            Cliente cliente;
             ArrayList<ElementoSel> reservas = null;
             while (cursor.hasNext()) {
                 elemento = cursor.next();
