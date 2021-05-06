@@ -381,7 +381,7 @@ getUI().getPage().setLocation("/ListadoReviews/");
         return listaClientes;
     }
 
-    @WebServlet(urlPatterns = "/ListadoReviews/*", name = "ListadoReviewsServlet", asyncSupported = true)
+    @WebServlet(urlPatterns = "/reviews/*", name = "ListadoReviewsServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = ListadoReviews.class, productionMode = false)
     public static class ListadoReviewsServlet extends VaadinServlet {
     }

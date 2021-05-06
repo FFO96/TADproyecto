@@ -275,7 +275,7 @@ public class ListadoClientes extends UI {
         return listaClientes;
     }
 
-    @WebServlet(urlPatterns = "/ListadoClientes/*", name = "ListadoClientesServlet", asyncSupported = true)
+    @WebServlet(urlPatterns = "/clientes/*", name = "ListadoClientesServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = ListadoClientes.class, productionMode = false)
     public static class ListadoClientesServlet extends VaadinServlet {
     }
