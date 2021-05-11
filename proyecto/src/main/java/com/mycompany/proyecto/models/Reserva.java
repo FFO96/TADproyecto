@@ -19,7 +19,7 @@ public class Reserva {
     private ElementoSel cliente;
     private ElementoSel apartamento;
 
-    public Reserva(ObjectId object_id, String fecha, String precio, String nombre, ElementoSel cliente, ElementoSel apartamento) {
+    public Reserva(ObjectId object_id, String fecha, String precio, ElementoSel apartamento, ElementoSel cliente) {
         this.object_id = object_id;
         this.fecha = fecha;
         this.precio = precio;
@@ -27,6 +27,12 @@ public class Reserva {
         this.apartamento = apartamento;
     }
 
+    public Reserva(String fecha, String precio, ElementoSel cliente, ElementoSel apartamento) {
+        this.fecha = fecha;
+        this.precio = precio;
+
+    }
+    
     public ObjectId getObject_id() {
         return object_id;
     }
