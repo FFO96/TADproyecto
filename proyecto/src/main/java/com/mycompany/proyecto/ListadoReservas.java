@@ -45,12 +45,14 @@ import org.bson.types.ObjectId;
 public class ListadoReservas extends UI {
 
     //Lista de los reservas
-    ArrayList<Cliente> ReservasList = new ArrayList();
+    ArrayList<Reserva> ReservasList = new ArrayList();
+    ArrayList<Cliente> ClientesList = new ArrayList();
+    
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         final VerticalLayout layout = new VerticalLayout();
-        Table table = new Table("Lista de reservas");
+        Table table = new Table("Lista de clientes");
         table.addContainerProperty("DNI", String.class, null);
         table.addContainerProperty("Nombre y apellidos", String.class, null);
         table.addContainerProperty("Telefono", String.class, null);
@@ -58,134 +60,140 @@ public class ListadoReservas extends UI {
         table.setSelectable(true);
         table.setPageLength(table.size());
 
-        Table tableReservas = new Table("Clientes de la reserva");
+        Table tableReservas = new Table("Reservas del cliente");
         tableReservas.addContainerProperty("Reserva", String.class, null);
         //Hacemos que sea seleccionable
         tableReservas.setSelectable(true);
         tableReservas.setPageLength(table.size());
 
-        final TextField fechaEdit = new TextField("Fecha:");
-        final TextField precioEdit = new TextField("Precio:");
+        final TextField nameEdit = new TextField("Nombre del cliente:");
+        final TextField dniEdit = new TextField("DNI del cliente:");
+        final TextField telefonoEdit = new TextField("Telefono del cliente:");
         Button btnEdit = new Button("Guardar Cambios");
-        Button btnBorrar = new Button("Borrar reserva");
-        Button btnCrear = new Button("Crear reserva");
-        Button btnGuardar = new Button("Guardar reserva");
+        Button btnBorrar = new Button("Borrar cliente");
+        Button btnCrear = new Button("Crear cliente");
+        Button btnGuardar = new Button("Guardar cliente");
 
-        ReservasList = listarClientes();
-        // Se completa la tabla si hay reservas en la lista
-        for (int i = 0; i < ReservasList.size(); i++) {
-            table.addItem(new Object[]{ReservasList.get(i).getDni(), ReservasList.get(i).getNombre(), ReservasList.get(i).getTelefono()}, i);
+        clientsList = listarClientes();
+        // Se completa la tabla si hay clientes en la lista
+        for (int i = 0; i < clientsList.size(); i++) {
+            table.addItem(new Object[]{clientsList.get(i).getDni(), clientsList.get(i).getNombre(), clientsList.get(i).getTelefono()}, i);
         }
 
-        // Listener sobre la tabla para una vez que se pulse sobre una fila de la tabla, los datos del reserva aparezcan en los inputs para poder editarlos
+        // Listener sobre la tabla para una vez que se pulse sobre una fila de la tabla, los datos del cliente aparezcan en los inputs para poder editarlos
         table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
             @Override
             public void itemClick(ItemClickEvent event) {
                 tableReservas.removeAllItems();
-                fechaEdit.setValue((String) event.getItem().getItemProperty("fecha").getValue());
-                precioEdit.setValue((String) event.getItem().getItemProperty("precio").getValue());
+                nameEdit.setValue((String) event.getItem().getItemProperty("Nombre y apellidos").getValue());
+                telefonoEdit.setValue((String) event.getItem().getItemProperty("Telefono").getValue());
+                dniEdit.setValue((String) event.getItem().getItemProperty("DNI").getValue());
 
-                Cliente reserva = ReservasList.get((int) event.getItemId());
-                for (int i = 0; i < reserva.getReservas().size(); i++) {
-                    tableReservas.addItem(new Object[]{reserva.getReservas().get(i).getNombre()}, i);
+                Cliente cliente = clientsList.get((int) event.getItemId());
+                for (int i = 0; i < cliente.getReservas().size(); i++) {
+                    tableReservas.addItem(new Object[]{cliente.getReservas().get(i).getNombre()}, i);
                 }
                 layout.addComponent(tableReservas);
             }
         });
 
-        // Listener sobre el boton de edición del reserva seleccionado en la tabla
+        // Listener sobre el boton de edición del cliente seleccionado en la tabla
         btnEdit.addClickListener(e -> {
             // Se comprueba que hay elementos en todos los inputs y que se ha seleccionado un elemento de la tabla para poder guardar los cambios
-            if (ReservasList.isEmpty() || fechaEdit.getValue() == "" || precioEdit.getValue() == "" || table.getValue() == null) {
-                Notification.show("No es posible guardar cambios si no hay reservas \n o alguno de los campos se encuentra vacío.");
+            if (clientsList.isEmpty() || nameEdit.getValue() == "" || telefonoEdit.getValue() == "" || dniEdit.getValue() == "" || table.getValue() == null) {
+                Notification.show("No es posible guardar cambios si no hay clientes \n o alguno de los campos se encuentra vacío.");
             } else {
                 // Se cambian los datos introducidos en el propietario correspondiente en la lista
+                clientsList.get((int) table.getValue()).setDni(dniEdit.getValue());
+                clientsList.get((int) table.getValue()).setNombre(nameEdit.getValue());
+                clientsList.get((int) table.getValue()).setTelefono(telefonoEdit.getValue());
 
-                ReservasList.get((int) table.getValue()).setNombre(fechaEdit.getValue());
-                ReservasList.get((int) table.getValue()).setTelefono(precioEdit.getValue());
-
-                editCliente(ReservasList.get((int) table.getValue()));
+                editCliente(clientsList.get((int) table.getValue()));
                 // Se limpian los inputs del formulario de edición
-                fechaEdit.setValue("");
-                precioEdit.setValue("");
+                nameEdit.setValue("");
+                telefonoEdit.setValue("");
+                dniEdit.setValue("");
                 tableReservas.removeAllItems();
                 //Se actualiza la tabla para que muestre la lista actualizada. Esto se hace borrando el contenido de la tabla y añadiendole la lista de nuevo
                 table.removeAllItems();
-                for (int i = 0; i < ReservasList.size(); i++) {
-                    table.addItem(new Object[]{ReservasList.get(i).getDni(), ReservasList.get(i).getNombre(), ReservasList.get(i).getTelefono()}, i);
+                for (int i = 0; i < clientsList.size(); i++) {
+                    table.addItem(new Object[]{clientsList.get(i).getDni(), clientsList.get(i).getNombre(), clientsList.get(i).getTelefono()}, i);
                 }
                 layout.removeComponent(tableReservas);
             }
 
         });
 
-        // Listener sobre el boton de borrar el reserva seleccionado
+        // Listener sobre el boton de borrar el cliente seleccionado
         btnBorrar.addClickListener(e -> {
 
             if (table.getValue() == null) {
-                Notification.show("No es posible eliminar un reserva si no ha seleccionado en la tabla");
+                Notification.show("No es posible eliminar un cliente si no ha seleccionado en la tabla");
             } else {
-                borrarCliente(ReservasList.get((int) table.getValue()));
-                fechaEdit.setValue("");
-                precioEdit.setValue("");
+                borrarCliente(clientsList.get((int) table.getValue()));
+                nameEdit.setValue("");
+                telefonoEdit.setValue("");
+                dniEdit.setValue("");
                 layout.removeComponent(tableReservas);
-                // actualizamos la lista de reservas
-                ReservasList = listarClientes();
+                // actualizamos la lista de clientes
+                clientsList = listarClientes();
                 //Se actualiza la tabla para que muestre la lista actualizada. Esto se hace borrando el contenido de la tabla y añadiendole la lista de nuevo
                 table.removeAllItems();
-                for (int i = 0; i < ReservasList.size(); i++) {
-                    table.addItem(new Object[]{ReservasList.get(i).getDni(), ReservasList.get(i).getNombre(), ReservasList.get(i).getTelefono()}, i);
+                for (int i = 0; i < clientsList.size(); i++) {
+                    table.addItem(new Object[]{clientsList.get(i).getDni(), clientsList.get(i).getNombre(), clientsList.get(i).getTelefono()}, i);
                 }
                 
             }
 
         });
 
-        // Listener sobre el boton de crear un nuevo reserva 
+        // Listener sobre el boton de crear un nuevo cliente 
         btnCrear.addClickListener(e -> {
-            fechaEdit.setValue("");
-            precioEdit.setValue("");
+            nameEdit.setValue("");
+            telefonoEdit.setValue("");
+            dniEdit.setValue("");
             layout.removeAllComponents();
-            layout.addComponents(fechaEdit, precioEdit, btnGuardar);
+            layout.addComponents(nameEdit, dniEdit, telefonoEdit, btnGuardar);
         });
         btnGuardar.addClickListener(e -> {
             // Se comprueba que hay elementos en todos los inputs
-            if (fechaEdit.getValue() == "" || precioEdit.getValue() == "") {
-                Notification.show("No es posible crear un reserva si alguno de los campos se encuentra vacío.");
+            if (nameEdit.getValue() == "" || telefonoEdit.getValue() == "" || dniEdit.getValue() == "") {
+                Notification.show("No es posible crear un cliente si alguno de los campos se encuentra vacío.");
             } else {
-                //crearReserva(new Reserva( fechaEdit.getValue(), precioEdit.getValue()));
-                fechaEdit.setValue("");
-                precioEdit.setValue("");
+                crearCliente(new Cliente(dniEdit.getValue(), nameEdit.getValue(), telefonoEdit.getValue()));
+                nameEdit.setValue("");
+                telefonoEdit.setValue("");
+                dniEdit.setValue("");
                 layout.removeAllComponents();
-                layout.addComponents(btnCrear, table, fechaEdit, precioEdit, btnEdit, btnBorrar);
-                // actualizamos la lista de reservas
-                ReservasList = listarClientes();
+                layout.addComponents(btnCrear, table, nameEdit, dniEdit, telefonoEdit, btnEdit, btnBorrar);
+                // actualizamos la lista de clientes
+                clientsList = listarClientes();
                 //Se actualiza la tabla para que muestre la lista actualizada. Esto se hace borrando el contenido de la tabla y añadiendole la lista de nuevo
                 table.removeAllItems();
-                for (int i = 0; i < ReservasList.size(); i++) {
-                    table.addItem(new Object[]{ReservasList.get(i).getDni(), ReservasList.get(i).getNombre(), ReservasList.get(i).getTelefono()}, i);
+                for (int i = 0; i < clientsList.size(); i++) {
+                    table.addItem(new Object[]{clientsList.get(i).getDni(), clientsList.get(i).getNombre(), clientsList.get(i).getTelefono()}, i);
                 }
             }
         });
 
-        layout.addComponents(btnCrear, table, fechaEdit, precioEdit, btnEdit, btnBorrar);
+        layout.addComponents(btnCrear, table, nameEdit, dniEdit, telefonoEdit, btnEdit, btnBorrar);
         layout.setMargin(true);
         layout.setSpacing(true);
         setContent(layout);
     }
 
-    public void crearCliente(Cliente reserva) {
+    public void crearCliente(Cliente cliente) {
         try {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
             // Conectar a la base de datos
             DB db = mongoClient.getDB("alquileres");
-            DBCollection collectionC = db.getCollection("reservas");
+            DBCollection collectionC = db.getCollection("clientes");
 
             BasicDBObject document;
             document = new BasicDBObject();
-            document.append("dni", reserva.getDni());
-            document.append("nombre", reserva.getNombre());
-            document.append("telefono", reserva.getTelefono());
+            document.append("dni", cliente.getDni());
+            document.append("nombre", cliente.getNombre());
+            document.append("telefono", cliente.getTelefono());
             collectionC.insert(document);
 
         } catch (UnknownHostException e) {
@@ -193,34 +201,34 @@ public class ListadoReservas extends UI {
         }
     }
 
-    public void borrarCliente(Cliente reserva) {
+    public void borrarCliente(Cliente cliente) {
         try {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
             // Conectar a la base de datos
             DB db = mongoClient.getDB("alquileres");
-            DBCollection collectionC = db.getCollection("reservas");
+            DBCollection collectionC = db.getCollection("clientes");
 
-            // Se elimina el reserva cusando el _id para indentificarlo en la coleccion
-            collectionC.remove(new BasicDBObject("_id", reserva.getObject_id()));
+            // Se elimina el cliente cusando el _id para indentificarlo en la coleccion
+            collectionC.remove(new BasicDBObject("_id", cliente.getObject_id()));
         } catch (UnknownHostException e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
-    public void editCliente(Cliente reserva) {
+    public void editCliente(Cliente cliente) {
         try {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
             // Conectar a la base de datos
             DB db = mongoClient.getDB("alquileres");
-            //Obtencion coleccion "reservas"
-            DBCollection collectionC = db.getCollection("reservas");
+            //Obtencion coleccion "clientes"
+            DBCollection collectionC = db.getCollection("clientes");
 
             BasicDBObject set = new BasicDBObject(); // Objeto con el que vamosa hacer set del atributo a cambiar
             set = new BasicDBObject();
             // Indica el atributo y su valor a establecer ($set)
-            set.append("$set", new BasicDBObject().append("nombre", reserva.getNombre()).append("telefono", reserva.getTelefono()).append("dni", reserva.getDni()));
+            set.append("$set", new BasicDBObject().append("nombre", cliente.getNombre()).append("telefono", cliente.getTelefono()).append("dni", cliente.getDni()));
             // Indica el filtro a usar para aplicar la modificacion
-            BasicDBObject searchQuery = new BasicDBObject().append("_id", reserva.getObject_id());
+            BasicDBObject searchQuery = new BasicDBObject().append("_id", cliente.getObject_id());
             //Se hace el update sobre la coleccion
             collectionC.update(searchQuery, set);
 
@@ -236,8 +244,8 @@ public class ListadoReservas extends UI {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
             // Conectar a la base de datos
             DB db = mongoClient.getDB("alquileres");
-            //Obtencion coleccion "reservas"
-            DBCollection collectionC = db.getCollection("reservas");
+            //Obtencion coleccion "clientes"
+            DBCollection collectionC = db.getCollection("clientes");
             cursor = collectionC.find();
 
             DBObject elemento;
@@ -270,8 +278,8 @@ public class ListadoReservas extends UI {
         return listaClientes;
     }
 
-    @WebServlet(urlPatterns = "/reservas/*", name = "ListadoClientesServlet", asyncSupported = true)
+    @WebServlet(urlPatterns = "/reservas/*", name = "ListadoReservasServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = ListadoReservas.class, productionMode = false)
-    public static class ListadoClientesServlet extends VaadinServlet {
+    public static class ListadoReservasServlet extends VaadinServlet {
     }
 }
