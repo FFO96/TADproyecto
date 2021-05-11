@@ -27,10 +27,11 @@ public class Reserva {
         this.apartamento = apartamento;
     }
 
-    public Reserva(String fecha, String precio, ElementoSel cliente, ElementoSel apartamento) {
+    public Reserva(String fecha, String precio, ElementoSel apartamento, ElementoSel cliente) {
         this.fecha = fecha;
         this.precio = precio;
-
+        this.cliente = cliente;
+        this.apartamento = apartamento;
     }
     
     public ObjectId getObject_id() {

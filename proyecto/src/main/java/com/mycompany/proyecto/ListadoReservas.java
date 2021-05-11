@@ -213,6 +213,7 @@ public class ListadoReservas extends UI {
 
             // Creamos la query para buscar el apartamento segun su _id
             BasicDBObject queryA = new BasicDBObject();
+            System.out.println(reserva.getApartamento());
             queryA.put("_id", reserva.getApartamento().getId());
             // Busqueda del apartamento para poder introducir su alias y direccion en el limpiador
             DBObject apartamento = collectionA.findOne(queryA);
