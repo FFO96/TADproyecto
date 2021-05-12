@@ -38,7 +38,7 @@ public class Propietario {
 
     public Propietario(String dni, String nombre, String telefono, String direccion_facturacion) {
 
-        this.apartamento = apartamento;
+        this.apartamentos = apartamentos;
     }
 
     public Propietario(String dni, String nombre, String telefono, String direccion_facturacion, ElementoSel apartamento) {
@@ -48,7 +48,7 @@ public class Propietario {
         this.telefono = telefono;
         this.direccion_facturacion = direccion_facturacion;
 
-        this.apartamento = apartamento;
+        this.apartamentos = apartamentos;
 
     }
 

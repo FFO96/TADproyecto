@@ -50,24 +50,6 @@ public class MyUI extends UI {
         grid.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         grid.setHeight(100, Sizeable.UNITS_PERCENTAGE);
 
-        /*Button topleft = new Button("Top Left");
-        grid.addComponent(topleft, 0, 0);
-        grid.setComponentAlignment(topleft, Alignment.TOP_LEFT);
-
-        Textfield topcenter = new Button("Top Center");
-        grid.addComponent(topcenter, 1, 0);
-        grid.setComponentAlignment(topcenter, Alignment.TOP_CENTER);
-
-        Button topright = new Button("Top Right");
-        grid.addComponent(topright, 2, 0);
-        grid.setComponentAlignment(topright, Alignment.TOP_RIGHT);
-        
-        Button middleleft = new Button("Middle Left");
-        grid.addComponent(middleleft, 0, 1);
-        grid.setComponentAlignment(middleleft,
-                  new Alignment(Bits.ALIGNMENT_VERTICAL_CENTER |
-                                Bits.ALIGNMENT_LEFT));*/
-
         Panel middlecenter = new Panel("WHO?RENTS acceso");
         FormLayout form = new FormLayout();
         TextField tf1 = new TextField("Nombre");
