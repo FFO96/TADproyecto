@@ -28,8 +28,9 @@ public class Apartamento {
         this.propietario = propietario;
     }
     
-    
-    public Apartamento( String alias, String direccion, String metros2, String precio, ElementoSel propietario) {
+
+    public Apartamento(String alias, String direccion, String metros2, String precio, ElementoSel propietario) {
+
         this.alias = alias;
         this.direccion = direccion;
         this.metros2 = metros2;
