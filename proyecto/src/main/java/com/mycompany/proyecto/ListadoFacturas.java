@@ -18,6 +18,7 @@ import com.mycompany.proyecto.models.Factura;
 import com.mycompany.proyecto.models.Limpiador;
 import com.mycompany.proyecto.models.Propietario;
 import com.mycompany.proyecto.models.Reserva;
+import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
@@ -40,6 +41,7 @@ import org.bson.types.ObjectId;
  *
  * @author Patricio
  */
+@Theme("mytheme")
 public class ListadoFacturas extends UI{
     //Lista de las reviews
     ArrayList<Factura> facturasList = new ArrayList();
@@ -294,6 +296,8 @@ public class ListadoFacturas extends UI{
     public ArrayList<Propietario> listarPropietarios() {
         DBCursor cursor = null;
         ArrayList<Propietario> listaPropietarios = new ArrayList();
+        ArrayList<ElementoSel> listaPropApart = new ArrayList();
+
         try {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
             // Conectar a la base de datos
@@ -305,7 +309,8 @@ public class ListadoFacturas extends UI{
             DBObject elemento;
             while (cursor.hasNext()) {
                 elemento = cursor.next();
-                listaPropietarios.add(new Propietario((ObjectId) elemento.get("_id"), (String) elemento.get("dni"), (String) elemento.get("nombre"), (String) elemento.get("telefono"), (String) elemento.get("direccion_facturacion"), new ElementoSel((ObjectId) elemento.get("apartamento.id"))));
+                listaPropApart.add(new ElementoSel((ObjectId) elemento.get("apartamento.id")));
+                listaPropietarios.add(new Propietario((ObjectId) elemento.get("_id"), (String) elemento.get("dni"), (String) elemento.get("nombre"), (String) elemento.get("telefono"), (String) elemento.get("direccion_facturacion"),listaPropApart));
             }
 
         } catch (UnknownHostException e) {
