@@ -5,43 +5,60 @@
  */
 package com.mycompany.proyecto.models;
 
+
 import java.util.ArrayList;
+
 import org.bson.types.ObjectId;
 
 /**
  *
+
  * @author Gonzalo
  */
 public class Propietario {
-   
+
     private ObjectId object_id;
     private String dni;
     private String nombre;
     private String telefono;
     private String direccion_facturacion;
+
     private ArrayList<ElementoSel> apartamentos;
 
     public Propietario(ObjectId object_id, String dni, String nombre, String telefono, String direccion_facturacion, ArrayList<ElementoSel> apartamentos) {
+
         this.object_id = object_id;
         this.dni = dni;
         this.nombre = nombre;
         this.telefono = telefono;
         this.direccion_facturacion = direccion_facturacion;
+
         this.apartamentos = apartamentos;
     }
 
     public Propietario(String dni, String nombre, String telefono, String direccion_facturacion) {
+
+        this.apartamento = apartamento;
+    }
+
+    public Propietario(String dni, String nombre, String telefono, String direccion_facturacion, ElementoSel apartamento) {
+
         this.dni = dni;
         this.nombre = nombre;
         this.telefono = telefono;
         this.direccion_facturacion = direccion_facturacion;
+
+        this.apartamento = apartamento;
+
     }
 
     public ObjectId getObject_id() {
         return object_id;
     }
 
-    public void setObjectId(ObjectId object_id) {
+
+    public void setObject_id(ObjectId object_id) {
+
         this.object_id = object_id;
     }
 
@@ -77,6 +94,7 @@ public class Propietario {
         this.direccion_facturacion = direccion_facturacion;
     }
 
+
     public ArrayList<ElementoSel> getApartamentos() {
         return this.apartamentos;
     }
@@ -84,4 +102,5 @@ public class Propietario {
     public void setApartamentos(ArrayList<ElementoSel> apartamentos) {
         this.apartamentos = apartamentos;
     }
+
 }

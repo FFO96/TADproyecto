@@ -22,6 +22,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ListSelect;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -70,6 +71,25 @@ public class ListadoClientes extends UI {
         Button btnBorrar = new Button("Borrar cliente");
         Button btnCrear = new Button("Crear cliente");
         Button btnGuardar = new Button("Guardar cliente");
+        
+        //Menu
+        MenuBar barmenu = new MenuBar();
+        layout.addComponent(barmenu);
+        //Evento para el menu
+        MenuBar.Command mycommand = new MenuBar.Command() {
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                getUI().getPage().setLocation("/"+selectedItem.getText().toLowerCase()+"/");
+            }  
+        };
+        //Lista del menu
+        MenuBar.MenuItem apartamentos = barmenu.addItem("Apartamentos", null, mycommand);
+        MenuBar.MenuItem clientes = barmenu.addItem("Clientes", null, mycommand);
+        MenuBar.MenuItem propietarios = barmenu.addItem("Propietarios", null, mycommand);
+        MenuBar.MenuItem facturas = barmenu.addItem("Facturas", null, mycommand);
+        MenuBar.MenuItem limpiadores = barmenu.addItem("Limpiadores", null, mycommand);
+        MenuBar.MenuItem reviews = barmenu.addItem("Reviews", null, mycommand);
+        MenuBar.MenuItem reservas = barmenu.addItem("Reservas", null, mycommand);
+        MenuBar.MenuItem cerrarSesion = barmenu.addItem("Salir", null, mycommand);
 
         clientsList = listarClientes();
         // Se completa la tabla si hay clientes en la lista
@@ -283,4 +303,4 @@ public class ListadoClientes extends UI {
     @VaadinServletConfiguration(ui = ListadoClientes.class, productionMode = false)
     public static class ListadoClientesServlet extends VaadinServlet {
     }
-}
+} 
