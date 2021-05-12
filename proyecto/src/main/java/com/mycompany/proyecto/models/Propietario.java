@@ -17,23 +17,23 @@ public class Propietario {
     private String nombre;
     private String telefono;
     private String direccion_facturacion;
-    private ElementoSel propietario;
+    private ElementoSel apartamento;
 
-    public Propietario(ObjectId object_id, String dni, String nombre, String telefono, String direccion_facturacion, ElementoSel propietario) {
+    public Propietario(ObjectId object_id, String dni, String nombre, String telefono, String direccion_facturacion, ElementoSel apartamento) {
         this.object_id = object_id;
         this.dni = dni;
         this.nombre = nombre;
         this.telefono = telefono;
         this.direccion_facturacion = direccion_facturacion;
-        this.propietario = propietario;
+        this.apartamento = apartamento;
     }
 
-    public Propietario(String dni, String nombre, String telefono, String direccion_facturacion, ElementoSel propietario) {
+    public Propietario(String dni, String nombre, String telefono, String direccion_facturacion, ElementoSel apartamento) {
         this.dni = dni;
         this.nombre = nombre;
         this.telefono = telefono;
         this.direccion_facturacion = direccion_facturacion;
-        this.propietario = propietario;
+        this.apartamento = apartamento;
     }
 
     public ObjectId getObject_id() {
@@ -76,12 +76,12 @@ public class Propietario {
         this.direccion_facturacion = direccion_facturacion;
     }
 
-    public ElementoSel getPropietario() {
-        return propietario;
+    public ElementoSel getApartamento() {
+        return apartamento;
     }
 
-    public void setPropietario(ElementoSel propietario) {
-        this.propietario = propietario;
+    public void setApartamento(ElementoSel propietario) {
+        this.apartamento = apartamento;
     }
 
     

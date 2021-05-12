@@ -25,6 +25,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -60,6 +61,25 @@ public class ListadoFacturas extends UI{
 
         propietariosList = listarPropietarios();
         final BeanItemContainer<ElementoSel> containerPropietarios = new BeanItemContainer<ElementoSel>(ElementoSel.class);
+        
+        //Menu
+        MenuBar barmenu = new MenuBar();
+        layout.addComponent(barmenu);
+        //Evento para el menu
+        MenuBar.Command mycommand = new MenuBar.Command() {
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                getUI().getPage().setLocation("/"+selectedItem.getText().toLowerCase()+"/");
+            }  
+        };
+        //Lista del menu
+        MenuBar.MenuItem apartamentos = barmenu.addItem("Apartamentos", null, mycommand);
+        MenuBar.MenuItem clientes = barmenu.addItem("Clientes", null, mycommand);
+        MenuBar.MenuItem propietarios = barmenu.addItem("Propietarios", null, mycommand);
+        MenuBar.MenuItem facturas = barmenu.addItem("Facturas", null, mycommand);
+        MenuBar.MenuItem limpiadores = barmenu.addItem("Limpiadores", null, mycommand);
+        MenuBar.MenuItem reviews = barmenu.addItem("Reviews", null, mycommand);
+        MenuBar.MenuItem reservas = barmenu.addItem("Reservas", null, mycommand);
+        MenuBar.MenuItem cerrarSesion = barmenu.addItem("Salir", null, mycommand);
 
         // Añadimos los limpiadores al container
         for (int i = 0; i < propietariosList.size(); i++) {

@@ -18,6 +18,11 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.combobox.FilteringMode;
@@ -25,13 +30,17 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ListSelect;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.bson.types.ObjectId;
 
 /**
@@ -64,11 +73,31 @@ public class ListadoReservas extends UI {
         //Hacemos que sea seleccionable
         table.setSelectable(true);
         table.setPageLength(table.size());
-
+        
         apartamentosList = listarApartamentos();
         final BeanItemContainer<ElementoSel> containerApartamentos = new BeanItemContainer<ElementoSel>(ElementoSel.class);
         clientesList = listarClientes();
         final BeanItemContainer<ElementoSel> containerClientes = new BeanItemContainer<ElementoSel>(ElementoSel.class);
+        
+        //Menu
+        MenuBar barmenu = new MenuBar();
+        layout.addComponent(barmenu);
+        //Evento para el menu
+        MenuBar.Command mycommand = new MenuBar.Command() {
+            public void menuSelected(MenuItem selectedItem) {
+                getUI().getPage().setLocation("/"+selectedItem.getText().toLowerCase()+"/");
+            }  
+        };
+        //Lista del menu
+        MenuItem apartamentos = barmenu.addItem("Apartamentos", null, mycommand);
+        MenuItem clientes = barmenu.addItem("Clientes", null, mycommand);
+        MenuItem propietarios = barmenu.addItem("Propietarios", null, mycommand);
+        MenuItem facturas = barmenu.addItem("Facturas", null, mycommand);
+        MenuItem limpiadores = barmenu.addItem("Limpiadores", null, mycommand);
+        MenuItem reviews = barmenu.addItem("Reviews", null, mycommand);
+        MenuItem reservas = barmenu.addItem("Reservas", null, mycommand);
+        MenuItem cerrarSesion = barmenu.addItem("Salir", null, mycommand);
+
 
 
         // Añadimos los limpiadores al container
@@ -368,7 +397,7 @@ public class ListadoReservas extends UI {
     
     
     
-
+    
     @WebServlet(urlPatterns = "/reservas/*", name = "ListadoReservasServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = ListadoReservas.class, productionMode = false)
     public static class ListadoReservasServlet extends VaadinServlet {
