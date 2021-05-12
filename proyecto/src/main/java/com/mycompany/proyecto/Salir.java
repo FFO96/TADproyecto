@@ -8,6 +8,8 @@ package com.mycompany.proyecto;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.server.WrappedSession;
 import com.vaadin.ui.UI;
 import javax.servlet.annotation.WebServlet;
 
@@ -19,6 +21,9 @@ public class Salir extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
+        VaadinSession vSession = VaadinSession.getCurrent();
+        WrappedSession httpSession = vSession.getSession();
+        httpSession.invalidate();
         getUI().getPage().setLocation("/");
     }
     @WebServlet(urlPatterns = "/salir/*", name = "SalirServlet", asyncSupported = true)
