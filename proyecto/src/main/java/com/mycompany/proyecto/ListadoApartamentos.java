@@ -64,6 +64,7 @@ import com.vaadin.ui.VerticalLayout;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import org.bson.types.ObjectId;
+import com.vaadin.ui.MenuBar;
 
 /**
  *
@@ -72,12 +73,44 @@ import org.bson.types.ObjectId;
 @Theme("mytheme")
 public class ListadoApartamentos extends UI{
 
-    ArrayList<Apartamento> apartamentos = new ArrayList();
+    ArrayList<Apartamento> apartamentosList = new ArrayList();
     ArrayList<Propietario> propietariosList = new ArrayList();
     
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         final VerticalLayout layout = new VerticalLayout();
+        
+        //Menu
+        MenuBar barmenu = new MenuBar();
+        layout.addComponent(barmenu);
+        //Evento para el menu
+        MenuBar.Command mycommand = new MenuBar.Command() {
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                getUI().getPage().setLocation("/"+selectedItem.getText().toLowerCase()+"/");
+            }  
+        };
+        
+        //Lista del menu
+        MenuBar.MenuItem apartamentos = barmenu.addItem("Apartamentos", null, mycommand);
+        MenuBar.MenuItem clientes = barmenu.addItem("Clientes", null, mycommand);
+        MenuBar.MenuItem propietarios = barmenu.addItem("Propietarios", null, mycommand);
+        MenuBar.MenuItem facturas = barmenu.addItem("Facturas", null, mycommand);
+        MenuBar.MenuItem limpiadores = barmenu.addItem("Limpiadores", null, mycommand);
+        MenuBar.MenuItem reviews = barmenu.addItem("Reviews", null, mycommand);
+        MenuBar.MenuItem reservas = barmenu.addItem("Reservas", null, mycommand);
+        MenuBar.MenuItem ofertas = barmenu.addItem("Ofertas", null, mycommand);
+        MenuBar.MenuItem cerrarSesion = barmenu.addItem("Salir", null, mycommand);
+        
+        /* Tabla de propietarios*/
+        Table tablePropietarios = new Table("Lista de propietarios");
+        tablePropietarios.addContainerProperty("DNI", String.class, null);
+        tablePropietarios.addContainerProperty("Nombre", String.class, null);
+        tablePropietarios.addContainerProperty("Telefono", String.class, null);
+        tablePropietarios.addContainerProperty("Direccion facturacion", String.class, null);
+        tablePropietarios.setSelectable(true);
+        tablePropietarios.setPageLength(tablePropietarios.size());
+
+
         // Valores iniciales de la tabla
         Table table = new Table("Lista de apartamentos");
         table.addContainerProperty("Alias", String.class, null);
@@ -96,7 +129,7 @@ public class ListadoApartamentos extends UI{
             containerPropietarios.addItem(new ElementoSel(propietariosList.get(i).getObject_id(), propietariosList.get(i).getNombre()));
         }
         
-        apartamentos = listarApartamentos();
+        apartamentosList = listarApartamentos();
         
         // Combobox para seleccionar los propietarios
         ComboBox comboboxPropietarios = new ComboBox("Seleciona un propietario:", containerPropietarios);
@@ -119,13 +152,13 @@ public class ListadoApartamentos extends UI{
         Button btnGuardar = new Button("Guardar Apartamento");
         
         // Se introducen los apartamentos en la tabla
-        for (int i = 0; i < apartamentos.size(); i++) {
+        for (int i = 0; i < apartamentosList.size(); i++) {
             table.addItem(new Object[]{
-                apartamentos.get(i).getAlias(),
-                apartamentos.get(i).getDireccion(),
-                apartamentos.get(i).getMetros2(),
-                apartamentos.get(i).getPrecio(),
-                apartamentos.get(i).getPropietario().getNombre()
+                apartamentosList.get(i).getAlias(),
+                apartamentosList.get(i).getDireccion(),
+                apartamentosList.get(i).getMetros2(),
+                apartamentosList.get(i).getPrecio(),
+                apartamentosList.get(i).getPropietario().getNombre()
             }, i);
         }
         
@@ -142,16 +175,16 @@ public class ListadoApartamentos extends UI{
         
         // Si se pulsa el botón de editar y hay un apartamento seleccionado
         btnEdit.addClickListener(e -> {
-            if (apartamentos.isEmpty() || aliasEdit.getValue() == "" || direccionEdit.getValue() == "" || metrosEdit.getValue()== "" || precioEdit.getValue() == "" || table.getValue() == null) {
+            if (apartamentosList.isEmpty() || aliasEdit.getValue() == "" || direccionEdit.getValue() == "" || metrosEdit.getValue()== "" || precioEdit.getValue() == "" || table.getValue() == null) {
                 Notification.show("No es posible guardar cambios si no hay limpiadores \n o el campo de contenido se encuentra vacio.");
             } else {
                 // 
-                apartamentos.get((int) table.getValue()).setAlias(aliasEdit.getValue());
-                apartamentos.get((int) table.getValue()).setDireccion(direccionEdit.getValue());
-                apartamentos.get((int) table.getValue()).setMetros2(metrosEdit.getValue());
-                apartamentos.get((int) table.getValue()).setPrecio(precioEdit.getValue());
+                apartamentosList.get((int) table.getValue()).setAlias(aliasEdit.getValue());
+                apartamentosList.get((int) table.getValue()).setDireccion(direccionEdit.getValue());
+                apartamentosList.get((int) table.getValue()).setMetros2(metrosEdit.getValue());
+                apartamentosList.get((int) table.getValue()).setPrecio(precioEdit.getValue());
                 
-                editApartamento(apartamentos.get((int) table.getValue()));
+                editApartamento(apartamentosList.get((int) table.getValue()));
                 
                 aliasEdit.setValue("");
                 direccionEdit.setValue("");
@@ -160,14 +193,14 @@ public class ListadoApartamentos extends UI{
                         
                 //Se actualiza la tabla para que muestre la lista actualizada. Esto se hace borrando el contenido de la tabla y añadiendole la lista de nuevo
                 table.removeAllItems();
-                for (int i = 0; i < apartamentos.size(); i++) {
+                for (int i = 0; i < apartamentosList.size(); i++) {
                     table.addItem(
                             new Object[]{
-                                apartamentos.get(i).getAlias(),
-                                apartamentos.get(i).getDireccion(),
-                                apartamentos.get(i).getMetros2(),
-                                apartamentos.get(i).getPrecio(),
-                                apartamentos.get(i).getPropietario().getNombre()
+                                apartamentosList.get(i).getAlias(),
+                                apartamentosList.get(i).getDireccion(),
+                                apartamentosList.get(i).getMetros2(),
+                                apartamentosList.get(i).getPrecio(),
+                                apartamentosList.get(i).getPropietario().getNombre()
                             }, i);
                 }
             }
@@ -178,20 +211,20 @@ public class ListadoApartamentos extends UI{
             if (table.getValue() == null) {
                 Notification.show("No es posible eliminar un limpiador si no ha seleccionado en la tabla");
             } else {
-                borrarApartamento(apartamentos.get((int) table.getValue()));
+                borrarApartamento(apartamentosList.get((int) table.getValue()));
                 aliasEdit.setValue("");
                 direccionEdit.setValue("");
                 precioEdit.setValue("");
-                apartamentos = listarApartamentos();
+                apartamentosList = listarApartamentos();
                 table.removeAllItems();
-                for (int i = 0; i < apartamentos.size(); i++) {
+                for (int i = 0; i < apartamentosList.size(); i++) {
                     table.addItem(
                             new Object[]{
-                                apartamentos.get(i).getAlias(),
-                                apartamentos.get(i).getDireccion(),
-                                apartamentos.get(i).getMetros2(),
-                                apartamentos.get(i).getPrecio(),
-                                apartamentos.get(i).getPropietario().getNombre()
+                                apartamentosList.get(i).getAlias(),
+                                apartamentosList.get(i).getDireccion(),
+                                apartamentosList.get(i).getMetros2(),
+                                apartamentosList.get(i).getPrecio(),
+                                apartamentosList.get(i).getPropietario().getNombre()
                             }, i);
                 }
             }
@@ -221,16 +254,16 @@ public class ListadoApartamentos extends UI{
                 precioEdit.clear();
                 layout.removeAllComponents();
                 layout.addComponents(btnCrear, table, aliasEdit, direccionEdit, metrosEdit, precioEdit, btnEdit, btnBorrar);
-                apartamentos = listarApartamentos();
+                apartamentosList = listarApartamentos();
                 table.removeAllItems();
-                for (int i = 0; i < apartamentos.size(); i++) {
+                for (int i = 0; i < apartamentosList.size(); i++) {
                     table.addItem(
                             new Object[]{
-                                apartamentos.get(i).getAlias(),
-                                apartamentos.get(i).getDireccion(),
-                                apartamentos.get(i).getMetros2(),
-                                apartamentos.get(i).getPrecio(),
-                                apartamentos.get(i).getPropietario().getNombre()
+                                apartamentosList.get(i).getAlias(),
+                                apartamentosList.get(i).getDireccion(),
+                                apartamentosList.get(i).getMetros2(),
+                                apartamentosList.get(i).getPrecio(),
+                                apartamentosList.get(i).getPropietario().getNombre()
                             }, i);
                 }
             }
@@ -345,18 +378,7 @@ public class ListadoApartamentos extends UI{
             MongoClient mongoClient = new MongoClient("localhost", 27017);
             DB db = mongoClient.getDB("alquileres");
             DBCollection collectionA = db.getCollection("apartamentos");
-            
-            //BasicDBObject queryA = new BasicDBObject();
-            //queryA.put("_id", apartamento.getApartamento().getId());
-            
-            // Busqueda del apartamento para poder introducir su alias y direccion en el limpiador
-            //DBObject apartamento = collectionA.findOne(queryA);
-
-            
-            // Creamos los objetos DB para apartamento que vamos a añadir al limpiador
-            //BasicDBObject apartamentoAux = new BasicDBObject();
-            //apartamentoAux.append("id", apartamento.get("_id")).append("alias", apartamento.get("alias")).append("direccion", apartamento.get("direccion"));
-            
+         
             BasicDBObject propietario = new BasicDBObject();
             propietario.append("id", apartamento.getPropietario().getId())
                         .append("nombre", apartamento.getPropietario().getNombre());

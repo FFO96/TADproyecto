@@ -65,6 +65,7 @@ import com.vaadin.ui.VerticalLayout;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import org.bson.types.ObjectId;
+import com.vaadin.ui.MenuBar;
 
 /**
  *
@@ -73,13 +74,35 @@ import org.bson.types.ObjectId;
 @Theme("mytheme")
 public class ListadoOfertas extends UI {
 
-    ArrayList<Oferta> ofertas = new ArrayList();
-    ArrayList<Apartamento> apartamentos = new ArrayList();
+    ArrayList<Oferta> ofertasList = new ArrayList();
+    ArrayList<Apartamento> apartamentosList = new ArrayList();
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
 
         final VerticalLayout layout = new VerticalLayout();
+        
+        //Menu
+        MenuBar barmenu = new MenuBar();
+        layout.addComponent(barmenu);
+        //Evento para el menu
+        MenuBar.Command mycommand = new MenuBar.Command() {
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                getUI().getPage().setLocation("/"+selectedItem.getText().toLowerCase()+"/");
+            }  
+        };
+        
+        //Lista del menu
+        MenuBar.MenuItem apartamentos = barmenu.addItem("Apartamentos", null, mycommand);
+        MenuBar.MenuItem clientes = barmenu.addItem("Clientes", null, mycommand);
+        MenuBar.MenuItem propietarios = barmenu.addItem("Propietarios", null, mycommand);
+        MenuBar.MenuItem facturas = barmenu.addItem("Facturas", null, mycommand);
+        MenuBar.MenuItem limpiadores = barmenu.addItem("Limpiadores", null, mycommand);
+        MenuBar.MenuItem reviews = barmenu.addItem("Reviews", null, mycommand);
+        MenuBar.MenuItem reservas = barmenu.addItem("Reservas", null, mycommand);
+        MenuBar.MenuItem ofertas = barmenu.addItem("Ofertas", null, mycommand);
+        MenuBar.MenuItem cerrarSesion = barmenu.addItem("Salir", null, mycommand);
+        
         /* Tabla de ofertas */
         Table table = new Table("Lista de ofertas");
         table.addContainerProperty("Precio", String.class, null);
@@ -91,10 +114,10 @@ public class ListadoOfertas extends UI {
         table.setPageLength(table.size());
 
         /* ComboBox de apartamentos */
-        apartamentos = listarApartamentos();
+        apartamentosList = listarApartamentos();
         final BeanItemContainer<ElementoSel> containerApartamentos = new BeanItemContainer<ElementoSel>(ElementoSel.class);
-        for (int i = 0; i < apartamentos.size(); i++) {
-            containerApartamentos.addItem(new ElementoSel(apartamentos.get(i).getObject_id(), apartamentos.get(i).getAlias()));
+        for (int i = 0; i < apartamentosList.size(); i++) {
+            containerApartamentos.addItem(new ElementoSel(apartamentosList.get(i).getObject_id(), apartamentosList.get(i).getAlias()));
         }
         ComboBox comboboxApartamentos = new ComboBox("Seleciona un apartamento:", containerApartamentos);
         comboboxApartamentos.setContainerDataSource(containerApartamentos);
@@ -112,13 +135,13 @@ public class ListadoOfertas extends UI {
         Button btnCrear = new Button("Crear oferta");
         Button btnGuardar = new Button("Guardar oferta");
 
-        ofertas = listarOfertas();
-        for (int i = 0; i < ofertas.size(); i++) {
+        ofertasList = listarOfertas();
+        for (int i = 0; i < ofertasList.size(); i++) {
             table.addItem(new Object[]{
-                ofertas.get(i).getPrecio(),
-                ofertas.get(i).getFecha(),
-                ofertas.get(i).getApartamento().getNombre(),
-                ofertas.get(i).getDescuento()
+                ofertasList.get(i).getPrecio(),
+                ofertasList.get(i).getFecha(),
+                ofertasList.get(i).getApartamento().getNombre(),
+                ofertasList.get(i).getDescuento()
             }, i);
         }
         
@@ -135,26 +158,26 @@ public class ListadoOfertas extends UI {
         // Listener boton edit
         btnEdit.addClickListener(e -> {
             // Se comprueba que hay elementos en todos los inputs y que se ha seleccionado un elemento de la tabla para poder guardar los cambios
-            if (ofertas.isEmpty() || precioEdit.getValue() == "" || fechaEdit.getValue() == "" || descuentoEdit.getValue() == "" || table.getValue() == null) {
+            if (ofertasList.isEmpty() || precioEdit.getValue() == "" || fechaEdit.getValue() == "" || descuentoEdit.getValue() == "" || table.getValue() == null) {
                 Notification.show("No es posible guardar cambios si no hay ofertas \n o el campo de contenido se encuentra vacio.");
             } else {
-                ofertas.get((int) table.getValue()).setPrecio(precioEdit.getValue());
-                ofertas.get((int) table.getValue()).setFecha(fechaEdit.getValue());
-                ofertas.get((int) table.getValue()).setDescuento(descuentoEdit.getValue());
+                ofertasList.get((int) table.getValue()).setPrecio(precioEdit.getValue());
+                ofertasList.get((int) table.getValue()).setFecha(fechaEdit.getValue());
+                ofertasList.get((int) table.getValue()).setDescuento(descuentoEdit.getValue());
                 
-                editOferta(ofertas.get((int) table.getValue()));
+                editOferta(ofertasList.get((int) table.getValue()));
                 
                 precioEdit.setValue("");
                 fechaEdit.setValue("");
                 descuentoEdit.setValue("");
                 
                 table.removeAllItems();
-                for (int i = 0; i < ofertas.size(); i++) {
+                for (int i = 0; i < ofertasList.size(); i++) {
                     table.addItem(new Object[]{
-                        ofertas.get(i).getPrecio(),
-                        ofertas.get(i).getFecha(),
-                        ofertas.get(i).getApartamento().getNombre(),
-                        ofertas.get(i).getDescuento()
+                        ofertasList.get(i).getPrecio(),
+                        ofertasList.get(i).getFecha(),
+                        ofertasList.get(i).getApartamento().getNombre(),
+                        ofertasList.get(i).getDescuento()
                     }, i);
                 }
             }
@@ -165,20 +188,20 @@ public class ListadoOfertas extends UI {
             if (table.getValue() == null) {
                 Notification.show("No es posible eliminar un limpiador si no ha seleccionado en la tabla");
             } else {
-                borrarOferta(ofertas.get((int) table.getValue()));
+                borrarOferta(ofertasList.get((int) table.getValue()));
                 precioEdit.setValue("");
                 fechaEdit.setValue("");
                 descuentoEdit.setValue("");
                 
-                ofertas = listarOfertas();
+                ofertasList = listarOfertas();
                 //Se actualiza la tabla para que muestre la lista actualizada. Esto se hace borrando el contenido de la tabla y añadiendole la lista de nuevo
                 table.removeAllItems();
-                for (int i = 0; i < ofertas.size(); i++) {
+                for (int i = 0; i < ofertasList.size(); i++) {
                     table.addItem(new Object[]{
-                        ofertas.get(i).getPrecio(),
-                        ofertas.get(i).getFecha(),
-                        ofertas.get(i).getApartamento().getNombre(),
-                        ofertas.get(i).getDescuento(),
+                        ofertasList.get(i).getPrecio(),
+                        ofertasList.get(i).getFecha(),
+                        ofertasList.get(i).getApartamento().getNombre(),
+                        ofertasList.get(i).getDescuento(),
                     }, i);
                 }
             }
@@ -212,15 +235,15 @@ public class ListadoOfertas extends UI {
                 layout.removeAllComponents();
                 layout.addComponents(btnCrear, table, precioEdit, fechaEdit, descuentoEdit, btnEdit, btnBorrar);
                 // actualizamos la lista de limpiadores
-                ofertas = listarOfertas();
+                ofertasList = listarOfertas();
                 //Se actualiza la tabla para que muestre la lista actualizada. Esto se hace borrando el contenido de la tabla y añadiendole la lista de nuevo
                 table.removeAllItems();
-                for (int i = 0; i < ofertas.size(); i++) {
+                for (int i = 0; i < ofertasList.size(); i++) {
                     table.addItem(new Object[]{
-                        ofertas.get(i).getPrecio(),
-                        ofertas.get(i).getFecha(),
-                        ofertas.get(i).getApartamento().getNombre(),
-                        ofertas.get(i).getDescuento()
+                        ofertasList.get(i).getPrecio(),
+                        ofertasList.get(i).getFecha(),
+                        ofertasList.get(i).getApartamento().getNombre(),
+                        ofertasList.get(i).getDescuento()
                     }, i);
                 }
             }
