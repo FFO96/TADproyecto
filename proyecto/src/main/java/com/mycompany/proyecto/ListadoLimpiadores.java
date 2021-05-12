@@ -20,6 +20,8 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.server.WrappedSession;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -55,6 +57,12 @@ public class ListadoLimpiadores extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        //sesion
+        VaadinSession vSession = VaadinSession.getCurrent();
+        WrappedSession httpSession = vSession.getSession();
+        if(httpSession.getAttribute("nombre")==null){
+            getUI().getPage().setLocation("/");
+        }
         final VerticalLayout layout = new VerticalLayout();
         Table table = new Table("Lista de limpiadores");
         table.addContainerProperty("DNI", String.class, null);

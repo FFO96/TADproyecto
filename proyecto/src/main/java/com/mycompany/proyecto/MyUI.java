@@ -15,6 +15,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.WrappedSession;
 import com.vaadin.shared.ui.AlignmentInfo.Bits;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
@@ -42,6 +43,8 @@ public class MyUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        WrappedSession httpSession = getSession().getSession();
+
         final VerticalLayout layout = new VerticalLayout();
         final HorizontalLayout panelHorizontal = new HorizontalLayout();
         layout.setSizeFull();
@@ -69,6 +72,8 @@ public class MyUI extends UI {
         enviado.addClickListener(i -> {
             //redirigir a reservas si accedes
             if(consultarAcceso(tf1.getValue(), tf2.getValue())){
+            httpSession.setAttribute("nombre", tf1.getValue());
+
                 getUI().getPage().setLocation("/reservas/"); //redirigimos al listado
             }
             else{
