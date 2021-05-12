@@ -137,7 +137,11 @@ public class ListadoClientes extends UI {
                 //Se actualiza la tabla para que muestre la lista actualizada. Esto se hace borrando el contenido de la tabla y añadiendole la lista de nuevo
                 table.removeAllItems();
                 for (int i = 0; i < clientsList.size(); i++) {
-                    table.addItem(new Object[]{clientsList.get(i).getDni(), clientsList.get(i).getNombre(), clientsList.get(i).getTelefono()}, i);
+                    table.addItem(new Object[]{
+                        clientsList.get(i).getDni(),
+                        clientsList.get(i).getNombre(),
+                        clientsList.get(i).getTelefono()
+                    }, i);
                 }
                 
             }
@@ -263,7 +267,7 @@ public class ListadoClientes extends UI {
                 }
                 listaClientes.add(new Cliente((ObjectId) elemento.get("_id"), (String) elemento.get("dni"), (String) elemento.get("nombre"), (String) elemento.get("telefono"), reservas));
             }
-
+ 
         } catch (UnknownHostException e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         } finally {
